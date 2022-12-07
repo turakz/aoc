@@ -1,2 +1,2 @@
 # aoc
-<div>collection of aoc solutions/div>
+<div>collection of aoc solutions</div>
