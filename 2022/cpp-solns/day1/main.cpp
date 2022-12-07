@@ -4,33 +4,32 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <algorithm>
-#include <numeric>
+#include <queue>
 
 auto parseFileLines(const std::filesystem::path& filePath) -> std::vector<std::string>
 {
   auto fs = std::ifstream {filePath};
   if (!fs.good())
   {
-    std::cerr << "ERROR::main.cpp::parseCalories(const std::filesystem::path&)::FILE_{" << filePath << "}_DOES_NOT_EXIST" << std::endl;
+    std::cerr << "ERROR::main.cpp::parseFileLines(const std::filesystem::path&)::FILE_{" << filePath << "}_DOES_NOT_EXIST" << std::endl;
     return std::vector<std::string> {};
   }
   auto data = std::vector<std::string> {};
   auto line = std::string {};
   while (std::getline(fs, line))
   {
-    data.push_back(std::move(line));
+    data.push_back(line);
   }
   return data;
 }
 
-auto findMaxSumCalories(const std::vector<std::string>& fileData) -> std::uint32_t
+auto findMaxSumCalories(const std::vector<std::string>& fileLines) -> std::uint32_t
 {
   auto maxCalorySum = std::uint32_t {0};
-  if (!fileData.empty())
+  if (!fileLines.empty())
   {
     auto localCalorySum = std::uint32_t {0};
-    for (const auto& line : fileData)
+    for (const auto& line : fileLines)
     {
       if (line.empty())
       {
@@ -46,7 +45,7 @@ auto findMaxSumCalories(const std::vector<std::string>& fileData) -> std::uint32
       }
     }
   }
-  else std::cerr << "ERROR::main.cpp::findMaxSumCalories(const std::vector<std::string>&)::FILE_DATA_EMPTY" << std::endl;
+  else std::cerr << "ERROR::main.cpp::findMaxSumCalories(const std::vector<std::string>&)::FILE_LINES_IS_EMPTY" << std::endl;
   return maxCalorySum;
 }
 
@@ -55,13 +54,13 @@ auto findTopNMaxSumCaloriesSum(const std::vector<std::string>& fileData, const s
   auto topNCalorySum = std::uint32_t {0};
   if (!fileData.empty())
   {
-    auto calorySums = std::vector<std::uint32_t> {};
+    auto calorySums = std::priority_queue<uint32_t> {}; // max heap default
     auto localCalorySum = std::uint32_t {0};
     for (const auto& line : fileData)
     {
       if (line.empty())
       {
-        calorySums.push_back(localCalorySum);
+        calorySums.push(localCalorySum);
         localCalorySum = 0;
       }
       else
@@ -72,11 +71,16 @@ auto findTopNMaxSumCaloriesSum(const std::vector<std::string>& fileData, const s
         localCalorySum += calory;
       }
     }
-    if (localCalorySum != 0) calorySums.push_back(localCalorySum);
-    std::sort(std::begin(calorySums), std::end(calorySums));
-    topNCalorySum = std::accumulate(std::begin(calorySums) + calorySums.size() - n, std::end(calorySums), std::uint32_t {0});
+    if (localCalorySum != 0) calorySums.push(localCalorySum);
+    auto pqIdx = std::size_t {n};
+    while (pqIdx && !calorySums.empty())
+    {
+      topNCalorySum += calorySums.top();
+      calorySums.pop();
+      --pqIdx;
+    }
   }
-  else std::cerr << "ERROR::main.cpp::findMaxSumCalories(const std::vector<std::string>&)::FILE_DATA_EMPTY" << std::endl;
+  else std::cerr << "ERROR::main.cpp::findTopNMaxSumCaloriesSum(const std::vector<std::string>&)::FILE_DATA_EMPTY" << std::endl;
   return topNCalorySum;
 }
 
@@ -89,8 +93,10 @@ auto solve(const std::filesystem::path& filePath) -> void
   // -----------------------------
   std::cout << "part 1: find max sum calories" << std::endl;
   std::cout << "soln: " << findMaxSumCalories(fileLines) << std::endl;
+  // part 1: find top n max sum calories 
+  // -----------------------------------
   const auto n = std::size_t {3};
-  std::cout << "part2: find top n {" << n << "} sum calories" << std::endl;
+  std::cout << "part2: find top n {" << n << "} max sum calories" << std::endl;
   std::cout << "soln: " << findTopNMaxSumCaloriesSum(fileLines, n) << std::endl;
 }
 
