@@ -171,7 +171,7 @@ auto computeDesiredOutcomeStrategyCardScore(const std::vector<std::string>& file
     // note: part 2 can re-use the same card computation so long as the card is converted from desired outcome to suggested strat
     //  -> in other words, the suggested strat is whatever achieves the desired outcome
     //  -> therefore, we can overwrite the desired outcome in our input lines with suggested strats (transform), and then compute 
-    // the card's core just like we computed it in part 1
+    // the card's score just like we computed it in part 1
     rounds = transformCardFromDesiredOutcomeToSuggestedStrategy(rounds);
     score = computeStrategyCardScore(rounds);
   }
