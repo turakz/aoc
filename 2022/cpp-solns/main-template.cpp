@@ -17,7 +17,7 @@ auto parseFileLines(const std::filesystem::path& filePath) -> std::vector<std::s
   auto line = std::string {};
   while (std::getline(fs, line))
   {
-    data.push_back(std::move(line));
+    data.push_back(line);
   }
   return data;
 }
