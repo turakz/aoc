@@ -96,7 +96,7 @@ auto computeStrategyCardScore(const std::vector<std::pair<char, char>>& rounds) 
   return strategyCardScore;
 }
 
-auto transformCardFromDesiredOutcomeToSuggestedStrategy(std::vector<std::pair<char, char>>& rounds) -> std::vector<std::pair<char, char>>&
+auto transformCardFromDesiredOutcomesToSuggestedStrategies(std::vector<std::pair<char, char>>& rounds) -> std::vector<std::pair<char, char>>&
 {
   auto choiceWeights = std::unordered_map<char, char>
   {
@@ -172,7 +172,7 @@ auto computeDesiredOutcomeStrategyCardScore(const std::vector<std::string>& file
     //  -> in other words, the suggested strat is whatever achieves the desired outcome
     //  -> therefore, we can overwrite the desired outcome in our input lines with suggested strats (transform), and then compute 
     // the card's score just like we computed it in part 1
-    rounds = transformCardFromDesiredOutcomeToSuggestedStrategy(rounds);
+    rounds = transformCardFromDesiredOutcomesToSuggestedStrategies(rounds);
     score = computeStrategyCardScore(rounds);
   }
   else std::cerr << "ERROR::computeDesiredOutcomeStrategyCardScore(const std::vector<std::pair<char, char>>&)::FILE_LINES_IS_EMPTY" << std::endl;
