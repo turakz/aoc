@@ -5,6 +5,16 @@
 #include <sstream>
 #include <vector>
 
+/*
+
+if (!.empty())
+{
+
+}
+else std::cerr << "ERROR::main.cpp::<functionName>::ERROR_MSG" << std::endl;
+
+*/
+
 auto parseFileLines(const std::filesystem::path& filePath) -> std::vector<std::string>
 {
   auto fs = std::ifstream {filePath};
