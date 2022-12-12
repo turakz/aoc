@@ -4,8 +4,6 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <stack>
-#include <deque>
 
 /*
 
@@ -83,9 +81,9 @@ auto readLinesIntoCrateMoves(const std::vector<std::string>& moveLines) -> std::
   return crateMoves;
 }
 
-auto readLinesIntoCrateStacks(const std::vector<std::string>& crateLines) -> std::vector<std::deque<char>>
+auto readLinesIntoCrateStacks(const std::vector<std::string>& crateLines) -> std::vector<std::vector<char>>
 {
-  auto crateStacks = std::vector<std::deque<char>> {};
+  auto crateStacks = std::vector<std::vector<char>> {};
   if (!crateLines.empty())
   {
     for (std::size_t rowIdx = 0; rowIdx < crateLines.size(); ++rowIdx)
@@ -94,7 +92,7 @@ auto readLinesIntoCrateStacks(const std::vector<std::string>& crateLines) -> std
       {
         if (std::isdigit(crateLines[rowIdx][colIdx]))
         {
-          auto crateStack = std::deque<char> {};
+          auto crateStack = std::vector<char> {};
           for (std::size_t vIdx = rowIdx; vIdx > 0; --vIdx)
           {
             if (std::isspace(crateLines[vIdx - 1][colIdx])) continue;
@@ -109,7 +107,7 @@ auto readLinesIntoCrateStacks(const std::vector<std::string>& crateLines) -> std
   return crateStacks;
 }
 
-auto processCrateStacksMove(std::vector<std::deque<char>>& crateStacks, const Move& crateMove, const CRANE_MODEL craneModel) -> std::vector<std::deque<char>>&
+auto processCrateStacksMove(std::vector<std::vector<char>>& crateStacks, const Move& crateMove, const CRANE_MODEL craneModel) -> std::vector<std::vector<char>>&
 {
   if (!crateStacks.empty())
   {
@@ -129,13 +127,17 @@ auto processCrateStacksMove(std::vector<std::deque<char>>& crateStacks, const Mo
         crateStacks[crateMove.destIdx - 1] = std::move(destStk);
         break;
       }
+      case CRANE_MODEL::CrateMover9001:
+      {
+        break;
+      }
     }
   }
-  else std::cerr << "ERROR::main.cpp::processCrateStacksMove(const std::vector<std::deque<char>>&, const Move& crateMove, const CRANE_MODEL)::CRATE_STACKS_IS_EMPTY" << std::endl;
+  else std::cerr << "ERROR::main.cpp::processCrateStacksMove(const std::vector<std::vector<char>>&, const Move& crateMove, const CRANE_MODEL)::CRATE_STACKS_IS_EMPTY" << std::endl;
   return crateStacks;
 }
 
-auto processCrateStacks(std::vector<std::deque<char>>& crateStacks, const std::vector<Move>& crateMoves, const CRANE_MODEL craneModel) -> std::string
+auto processCrateStacks(std::vector<std::vector<char>>& crateStacks, const std::vector<Move>& crateMoves, const CRANE_MODEL craneModel) -> std::string
 {
   auto crateStackLabelsSequence = std::string {};
   if (!crateStacks.empty())
@@ -149,7 +151,7 @@ auto processCrateStacks(std::vector<std::deque<char>>& crateStacks, const std::v
       crateStackLabelsSequence += crateStack.back();
     }
   }
-  else std::cerr << "ERROR::main.cpp::processCrateStacks(std::vector<std::deque<char>>&, const std::vector<Move>&, const CRANE_MODEL)::CRATE_STACKS_IS_EMPTY" << std::endl;
+  else std::cerr << "ERROR::main.cpp::processCrateStacks(std::vector<std::vector<char>>&, const std::vector<Move>&, const CRANE_MODEL)::CRATE_STACKS_IS_EMPTY" << std::endl;
   return crateStackLabelsSequence;
 }
 
@@ -185,6 +187,9 @@ auto solve(const std::filesystem::path& filePath) -> void
   std::cout << "top crates label sequence: " << topCratesLabelSequence << std::endl;
   // part 2:
   // -----------------------------
+  topCratesLabelSequence = processCrateStacks(crateStacks, crateMoves, CRANE_MODEL::CrateMover9001);
+  std::cout << "part 2" << std::endl;
+  std::cout << "top crates label sequence: " << topCratesLabelSequence << std::endl;
 }
 
 auto main(int32_t argc, char* argv[]) -> std::int32_t
