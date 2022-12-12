@@ -114,20 +114,22 @@ auto processCrateStacksMove(std::vector<std::vector<char>>& crateStacks, const M
     auto nCrates = crateMove.nCrates;
     auto startStk = std::move(crateStacks[crateMove.startIdx - 1]);
     auto destStk = std::move(crateStacks[crateMove.destIdx - 1]);
-    if (nCrates == 1 || craneModel == CRANE_MODEL::CrateMover9000)
+    auto cleanup = bool {false};
+    for (std::size_t n = nCrates; n > 0; --n)
     {
-      for (std::size_t n = 0; n < nCrates; ++n)
+      if (nCrates == 1 || craneModel == CRANE_MODEL::CrateMover9000)
       {
         destStk.push_back(startStk.back());
         startStk.pop_back();
       }
-    }
-    else if (craneModel == CRANE_MODEL::CrateMover9001)
-    {
-      for (std::size_t n = nCrates; n > 0; --n)
+      else if (craneModel == CRANE_MODEL::CrateMover9001)
       {
         destStk.push_back(startStk[startStk.size() - n]);
+        cleanup = true;
       }
+    }
+    if (cleanup)
+    {
       startStk.erase(
           std::begin(startStk) + startStk.size() - nCrates,
           std::end(startStk)
