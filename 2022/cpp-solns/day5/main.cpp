@@ -111,42 +111,47 @@ auto processCrateStacksMove(std::vector<std::vector<char>>& crateStacks, const M
 {
   if (!crateStacks.empty())
   {
-    switch(craneModel)
+    auto nCrates = crateMove.nCrates;
+    auto startStk = std::move(crateStacks[crateMove.startIdx - 1]);
+    auto destStk = std::move(crateStacks[crateMove.destIdx - 1]);
+    if (nCrates == 1 || craneModel == CRANE_MODEL::CrateMover9000)
     {
-      case CRANE_MODEL::CrateMover9000:
+      for (std::size_t n = 0; n < nCrates; ++n)
       {
-        auto nCrates = crateMove.nCrates;
-        auto startStk = std::move(crateStacks[crateMove.startIdx - 1]);
-        auto destStk = std::move(crateStacks[crateMove.destIdx - 1]);
-        for (std::size_t n = 0; n < nCrates; ++n)
-        {
-          destStk.push_back(startStk.back());
-          startStk.pop_back();
-        }
-        crateStacks[crateMove.startIdx - 1] = std::move(startStk);
-        crateStacks[crateMove.destIdx - 1] = std::move(destStk);
-        break;
-      }
-      case CRANE_MODEL::CrateMover9001:
-      {
-        break;
+        destStk.push_back(startStk.back());
+        startStk.pop_back();
       }
     }
+    else if (craneModel == CRANE_MODEL::CrateMover9001)
+    {
+      for (std::size_t n = nCrates; n > 0; --n)
+      {
+        destStk.push_back(startStk[startStk.size() - n]);
+      }
+      startStk.erase(
+          std::begin(startStk) + startStk.size() - nCrates,
+          std::end(startStk)
+        );
+    }
+    crateStacks[crateMove.startIdx - 1] = std::move(startStk);
+    crateStacks[crateMove.destIdx - 1] = std::move(destStk);
   }
   else std::cerr << "ERROR::main.cpp::processCrateStacksMove(const std::vector<std::vector<char>>&, const Move& crateMove, const CRANE_MODEL)::CRATE_STACKS_IS_EMPTY" << std::endl;
   return crateStacks;
 }
 
-auto processCrateStacks(std::vector<std::vector<char>>& crateStacks, const std::vector<Move>& crateMoves, const CRANE_MODEL craneModel) -> std::string
+auto processCrateStacks(const std::vector<std::vector<char>>& crateStacks, const std::vector<Move>& crateMoves, const CRANE_MODEL craneModel) -> std::string
 {
   auto crateStackLabelsSequence = std::string {};
   if (!crateStacks.empty())
   {
+    // preserve original input state
+    auto localCrateStacks = std::vector<std::vector<char>> {crateStacks};
     for (const auto& crateMove : crateMoves)
     {
-        crateStacks = processCrateStacksMove(crateStacks, crateMove, craneModel);
+        localCrateStacks = processCrateStacksMove(localCrateStacks, crateMove, craneModel);
     }
-    for (const auto& crateStack : crateStacks)
+    for (const auto& crateStack : localCrateStacks)
     {
       crateStackLabelsSequence += crateStack.back();
     }
