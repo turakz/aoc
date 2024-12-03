@@ -1,5 +1,5 @@
 -- to require local modules we have to append our "include" or "source" directories to the interpreter's global `package.path` variable
-package.path = package.path .. ";/home/fractals/dev/aoc/src/2023/lua/?.lua"
+package.path = package.path .. ";/home/fractals/dev/aoc/src/?.lua"
 
 require("debugging")
 require("file")

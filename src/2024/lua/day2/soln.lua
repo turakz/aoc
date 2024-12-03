@@ -1,5 +1,5 @@
 -- to require local modules we have to append our "include" or "source" directories to the interpreter's global `package.path` variable
-package.path = package.path .. ";/home/fractals/dev/aoc/src/2024/lua/?.lua"
+package.path = package.path .. ";/home/fractals/dev/aoc/src/?.lua"
 
 require("debugging")
 require("file")
@@ -17,7 +17,7 @@ require("file")
 
     soln: in-place comparisons/arithmetic, with helper functions for identifying strict orderedness and calculating adjacent differences
 
-    problem 1: introduce a safety tolerence requirement
+    problem 2: introduce a safety tolerence requirement
 
     - if a report can remove 1 bad level and achieve a safe report, we can include that in our solution set
       -> edit distance length problem (?)
