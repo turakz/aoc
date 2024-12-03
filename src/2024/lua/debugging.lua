@@ -3,11 +3,14 @@ Debug.__index = Debug
 
 function Debug:new()
   self = {
-    dump_table = function(table, indent)
+    dump_table = function(table, label, indent)
+      if not label then
+        label = ""
+      end
       if not indent then
         indent = 0
       end
-      print(string.rep(" ", indent) .. "{")
+      print(string.rep(" ", indent) .. "" .. label .. "{")
       for k, v in pairs(table) do
         local format = string.rep(" ", indent + 1) .. "[" .. k .. "]" .. ": "
         if type(v) == "table" then
