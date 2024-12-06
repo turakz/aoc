@@ -48,11 +48,11 @@ function solve(input_file)
   -- forward_edges[v] is the set of all vertices that must come after v
   local forward_edges = {}
 
-
   -- summations variables for the problems
   local middle_page_sum = 0
   local sorted_middle_page_sum = 0
 
+  -- parsing and solutions
   for _, line in ipairs(lines) do
 
     if #line == 0 then
@@ -71,7 +71,7 @@ function solve(input_file)
       local x = edge[1]
       local y = edge[2]
       -- so for 47|53 this means that 47 must come before 53, or 53 must come after 47
-      -- for E[53] = {47}: 47 must come before 53
+      -- for backward_edges[53] = {47}: 47 must come before 53
       if backward_edges[y] then
         local set = backward_edges[y]
         table.insert(set, x)
@@ -131,7 +131,9 @@ function solve(input_file)
 
         for i, x in ipairs(vertices) do
           for j, y in ipairs(vertices) do
-            if i < j and backward_edges[x] and exists(y, backward_edges[x]) then
+            -- if y points toward x, or rather, if y exists in the set of edges that point towards it, and it appears after x, it's out of order
+            -- in other words: if i < j and not forward_edges[x] or not exists(y, forward_edges[x]) then ... end => x does not point to y, and is out of order
+            if i < j and exists(y, backward_edges[x] or {}) then
               sorted = false
             end
           end
@@ -168,13 +170,11 @@ function solve(input_file)
             local v = queue[1]
             table.remove(queue, 1)
             table.insert(sorted_pages, v)
-            if forward_edges[v] then
-              for _, y in ipairs(forward_edges[v]) do
-                if in_degree[y] and exists(y, forward_edges[v]) then
-                  in_degree[y] = in_degree[y] - 1
-                  if in_degree[y] == 0 then
-                    table.insert(queue, y)
-                  end
+            for _, y in ipairs(forward_edges[v] or {}) do
+              if in_degree[y] and exists(y, forward_edges[v] or {}) then
+                in_degree[y] = in_degree[y] - 1
+                if in_degree[y] == 0 then
+                  table.insert(queue, y)
                 end
               end
             end
