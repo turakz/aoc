@@ -19,7 +19,7 @@ require("file")
 
 function solve(input_file)
   local file = File:new()
-  local lines = file.to_lines(input_file)
+  local lines = file:to_lines(input_file)
 
   local left_list = {}
   local right_list = {}

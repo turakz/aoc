@@ -30,10 +30,10 @@ require("file")
 function solve(input_file)
   local debug = Debug:new()
   local input = File:new()
-  local lines = input.to_lines(input_file)
+  local lines = input:to_lines(input_file)
 
   print("input lines:")
-  debug.dump_table(lines)
+  debug:dump_table(lines)
 
   -- soln1: time n*m/space n*(m - 1) (?)
   -- helper function for checking strict orderedness
@@ -81,7 +81,7 @@ function solve(input_file)
       levels[#levels + 1] = tonumber(level)
     end
     if is_valid_report(levels) and is_safe_report(levels) then
-      --debug.dump_table(levels)
+      --debug:dump_table(levels)
       table.insert(safe_reports, levels)
     else
       table.insert(unsafe_reports, levels)
@@ -101,7 +101,7 @@ function solve(input_file)
         end
       end
       if is_valid_report(buffer) and is_safe_report(buffer) then
-        --debug.dump_table(buffer)
+        --debug:dump_table(buffer)
         table.insert(tolerence_safe_reports, report)
         break
       end
