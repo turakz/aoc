@@ -17,6 +17,11 @@ require("set")
       => so given the map and a starting position, "map" out the patrol guards path until all rooms have been mapped/visited,
       or the guard arrives at a point where they cannot turn right because of an obstacle, and are therefore stuck
       => mark rooms that were legally visited with "X": the final result is the total number of "X" markers
+
+      -> simulate the walking starting from start position and mapping directional characters to index shifts
+      => if we have a valid i + shift, j + shift move and it's not an obstacle, mark the room as visited and step forward
+      => if we encounter an object, we must update our shifts by rotating our current directional character 90 degrees, and getting our new
+      shift values
 ]]--
 
 function solve(input_file)
@@ -85,17 +90,46 @@ function solve(input_file)
   assert(directionals[puzzle_map[gi][gj]])
   local directional = puzzle_map[gi][gj]
 
-  render_map(puzzle_map, "starting state")
+  render_map(puzzle_map, "guard start state")
+  local move = 0
+  local visited_count = 1
 
-  for r, _ in ipairs(puzzle_map) do
-    for c, _ in ipairs(puzzle_map[r]) do
-      -- simulate
+  local seen = {}
+  while true do
+    local i = directionals[directional][1]
+    local j = directionals[directional][2]
+    while is_valid_move(puzzle_map, gi + i, gj + j) and puzzle_map[gi + i][gj + j] ~= "#" do
+      if not seen[gi] then
+        seen[gi] = {}
+      end
+      seen[gi][gj] = true
+      print("seen: (" .. gi .. ", " .. gj .. ")")
+      puzzle_map[gi][gj] = "X"
+      gi = gi + i
+      gj = gj + j
+      puzzle_map[gi][gj] = directional
+      render_map(puzzle_map, "guard move: " .. move)
+      move = move + 1
+    end
 
+    directional = roate_directional(directional)
+    render_map(puzzle_map, "guard rotate")
 
+    if not is_valid_move(puzzle_map, gi + i, gj + j) then
+      debug:dump_table(seen, "seen = ")
+      for row, columns in pairs(seen) do
+        for column, _ in pairs(columns) do
+          visited_count = visited_count + 1
+        end
+      end
+      break
     end
   end
+  render_map(puzzle_map, "guard exited map")
+  print("guard visited " .. visited_count .. " rooms")
+
 end
 
 
-solve("example-input.txt")
---solve("input.txt")
+--solve("example-input.txt")
+solve("input.txt")

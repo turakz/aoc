@@ -1,5 +1,7 @@
 Set = Set or {}
 
+-- TODO(fractals): equality, relational
+
 function Set:new(list)
   --- let each instance have its own notion of self, not a shared self through __index
   local self = {}
@@ -72,4 +74,13 @@ function Set:tostring()
     table.insert(data, ele)
   end
   return "{" .. table.concat(data, ", ") .. "}"
+end
+
+function Set:sorted(comp)
+  local data = {}
+  for ele, _ in pairs(self._data) do
+    table.insert(data, ele)
+  end
+  table.sort(data, comp)
+  return Set:new(data)
 end

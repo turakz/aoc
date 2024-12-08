@@ -25,10 +25,10 @@ require("file")
 function solve(input_file)
   local debug = Debug:new()
   local input = File:new()
-  local lines = input.to_lines(input_file)
+  local lines = input:to_lines(input_file)
 
   print("input lines:")
-  debug.dump_table(lines)
+  debug:dump_table(lines)
 
   for _, line in ipairs(lines) do
     local digits = {}

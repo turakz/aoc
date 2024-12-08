@@ -17,10 +17,10 @@ require("file")
 function solve(input_file)
   local debug = Debug:new()
   local input = File:new()
-  local lines = input.to_lines(input_file)
+  local lines = input:to_lines(input_file)
 
   print("input lines:")
-  debug.dump_table(lines)
+  debug:dump_table(lines)
 
   local s1_sum = 0
   local s2_sum = 0
@@ -50,11 +50,11 @@ function solve(input_file)
       end
     end
     if #s1_digits > 0 then
-      --debug.dump_table(s1_digits)
+      --debug:dump_table(s1_digits)
       s1_sum = s1_sum + (tonumber(s1_digits[1] .. "" .. s1_digits[#s1_digits]))
     end
     if #s2_digits > 0 then
-      --debug.dump_table(s2_digits)
+      --debug:dump_table(s2_digits)
       s2_sum = s2_sum + (tonumber(s2_digits[1] .. "" .. s2_digits[#s2_digits]))
     end
   end
